@@ -15,13 +15,13 @@ public class Showcase extends JPanel
             {   repaint();  }});    timer.start();
     }
 
-    public void paintComponent(Graphics g)
+    public void paintComponent(Graphics gTemp)
     {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D)g;
-
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Anti-aliasing
-        
+        // Setup
+        super.paintComponent(gTemp);
+        Graphics2D g = (Graphics2D)gTemp;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Anti-aliasing
+ 
 
     }
 
