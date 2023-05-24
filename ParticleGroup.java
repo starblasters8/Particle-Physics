@@ -22,6 +22,11 @@ public class ParticleGroup
         this.particles = new ArrayList<Particle>();
     }
 
+    public void update()
+    {
+        for(Particle p : particles) p.update();
+    }
+
     public void randomizeMass(double ranBy)
     {for(Particle p : particles)    p.setM(p.getM() + ((Math.random() * ranBy) - (ranBy/2)));}
 

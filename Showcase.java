@@ -12,7 +12,7 @@ public class Showcase extends JPanel
         setBackground(Color.BLACK);
 
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
-            {   repaint();  }});    timer.start();
+        {   repaint();  }});    timer.start();
     }
 
     public void paintComponent(Graphics gTemp)
