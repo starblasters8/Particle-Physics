@@ -16,7 +16,9 @@ public class Showcase extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(0,0,800,800,10,10,Color.WHITE));
+        pGroups.add(new ParticleGroup(50,50,400,400,10,1,Color.RED));
+        for(ParticleGroup p : pGroups)
+            p.randomizeMass(0.5);
     }
 
     public void paintComponent(Graphics gTemp)
@@ -28,8 +30,9 @@ public class Showcase extends JPanel
  
         for(ParticleGroup p : pGroups)
         {
-            //p.update();
+            p.updateAll();
             p.drawAll(g);
+            p.drawBoundingBox(g, Color.WHITE);
         }
     }
 
