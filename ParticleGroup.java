@@ -39,7 +39,8 @@ public class ParticleGroup
         {
             for(Particle p2 : p)
             {
-                p2.setVY(p2.getVY() + (GRAVITY * p2.getMass())); // Apply gravity
+                
+                p2.setVY(p2.getVY() + GRAVITY); // Apply gravity
                 p2.update();
             }
         }
@@ -64,8 +65,8 @@ public class ParticleGroup
             {
                 if(p2.getX() < minX) minX = p2.getX();
                 if(p2.getY() < minY) minY = p2.getY();
-                if(p2.getX()+p2.getDiameter() > maxX) maxX = p2.getX();
-                if(p2.getY()+p2.getDiameter() > maxY) maxY = p2.getY();
+                if(p2.getX()+p2.getDiameter() > maxX) maxX = p2.getX()+p2.getDiameter();
+                if(p2.getY()+p2.getDiameter() > maxY) maxY = p2.getY()+p2.getDiameter();
             }
         }
 
