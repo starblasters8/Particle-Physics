@@ -13,8 +13,6 @@ public class ParticleGroup
     protected double elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
     protected double boundW, boundH; // Width and height of the screen/max bounding box
 
-    protected final double GRAVITY = 9.81; // Gravitational constant
-
     public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundW, double boundH)
     {
         this.x = x;
@@ -49,10 +47,7 @@ public class ParticleGroup
     { 
         allParticleCollision();
         for(Particle p : particles)
-        {
-            p.setVY(p.getVY() + GRAVITY); // Apply gravity
             p.update();
-        }
 
         fitBoundingBox();
     }
@@ -72,10 +67,10 @@ public class ParticleGroup
         }
     }
     
-    public void drawAll(Graphics2D g)
+    public void drawAll(Graphics2D g, boolean drawOutline)
     {
         for(Particle p : particles)
-            p.draw(g);
+            p.draw(g, drawOutline);
     }
 
     public void fitBoundingBox() // Fits the bounding box to the particles
@@ -100,6 +95,12 @@ public class ParticleGroup
     {
         g.setColor(c);
         g.drawRect((int)x, (int)y, (int)w, (int)h);
+    }
+
+    public void randomizeVX(double ranBy)
+    { 
+        for(Particle p : particles)
+            p.setVX(p.getVX() + ((Math.random() * ranBy) - (ranBy/2))); 
     }
 
     public void randomizeMass(double ranBy)
@@ -135,7 +136,6 @@ public class ParticleGroup
     public double getDiameter() {return this.diameter;}
     public double getMass() {return this.mass;}
     public Color getC() {return this.c;}
-    public double getGravity() { return this.GRAVITY; }
     public Particle[] getParticles() {return this.particles;}
 
     public void setX(double x) {this.x = x;}

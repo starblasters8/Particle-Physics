@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Demo extends JPanel
 {
-    private int maxFPS = 30;
+    private int maxFPS = 15;
     private ArrayList<ParticleGroup> pGroups = new ArrayList<ParticleGroup>();
 
     public Demo(int w, int h)
@@ -16,9 +16,12 @@ public class Demo extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,10,0.1,0.85,Color.RED, w, h));
+        pGroups.add(new ParticleGroup(50,50,400,400,30,10,0.80,Color.RED, w, h));
         for(ParticleGroup p : pGroups)
-            p.randomizeMass(0.5);
+        {
+            p.randomizeMass(3);
+            p.randomizeVX(0.1);
+        }            
     }
 
     public void paintComponent(Graphics gTemp)
@@ -31,7 +34,7 @@ public class Demo extends JPanel
         for(ParticleGroup p : pGroups)
         {
             p.updateAll();
-            p.drawAll(g);
+            p.drawAll(g, true);
             p.drawBoundingBox(g, Color.WHITE);
         }
     }
