@@ -5,13 +5,17 @@ public class ParticleGroup
 {
     protected double x, y; // X and Y coordinates of top left corner
     protected double w, h; // Width and height
-    protected Particle[][] particles; // Particles in the group
+    protected Particle[] particles; // Particles in the group
     protected Color c; // Color
     protected double radius, mass; // Radius and mass
     protected double diameter; // Diameter
+
+    protected double elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
+    protected double boundW, boundH; // Width and height of the screen/max bounding box
+
     protected final double GRAVITY = 9.81; // Gravitational constant
 
-    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, Color c)
+    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundW, double boundH)
     {
         this.x = x;
         this.y = y;
@@ -21,53 +25,69 @@ public class ParticleGroup
         this.mass = mass;
         this.diameter = radius*2;
         this.c = c;
+        this.elasticity = elasticity;
+        this.boundW = boundW;
+        this.boundH = boundH;
 
-        particles = new Particle[(int)Math.floor(w/diameter)][(int)Math.floor(h/diameter)];
         generateParticles();
     }
 
     public void generateParticles()
     {
-        for(int i = 0; i < particles.length; i++)
-            for(int j = 0; j < particles[i].length; j++)
-                particles[i][j] = new Particle(x + (i*diameter), y + (j*diameter), radius, mass, c);
+        Particle[][] tempParticles = new Particle[(int)Math.floor(w/diameter)][(int)Math.floor(h/diameter)];
+        for(int i = 0; i < tempParticles.length; i++)
+            for(int j = 0; j < tempParticles[i].length; j++)
+                tempParticles[i][j] = new Particle(x + (i*diameter), y + (j*diameter), radius, mass, elasticity, c, boundW, boundH, this.x, this.y);
+        
+        particles = new Particle[tempParticles.length*tempParticles[0].length];
+        for(int i = 0; i < tempParticles.length; i++)
+            for(int j = 0; j < tempParticles[i].length; j++)
+                particles[(i*tempParticles[i].length)+j] = tempParticles[i][j];
     }
 
     public void updateAll()
     { 
-        for(Particle[] p : particles)
+        allParticleCollision();
+        for(Particle p : particles)
         {
-            for(Particle p2 : p)
-            {
-                
-                p2.setVY(p2.getVY() + GRAVITY); // Apply gravity
-                p2.update();
-            }
+            p.setVY(p.getVY() + GRAVITY); // Apply gravity
+            p.update();
         }
 
         fitBoundingBox();
     }
+
+    public void allParticleCollision()
+    {
+        for(int i = 0; i < particles.length; i++)
+        {
+            for(int j = 0; j < particles.length; j++)
+            {
+                if(i != j)
+                {
+                    if(particles[i].checkParticleCollision(particles[j]))
+                        particles[i].doParticleCollision(particles[j]);
+                }
+            }
+        }
+    }
     
     public void drawAll(Graphics2D g)
     {
-        for(Particle[] p : particles)
-            for(Particle p2 : p)
-                p2.draw(g);
+        for(Particle p : particles)
+            p.draw(g);
     }
 
     public void fitBoundingBox() // Fits the bounding box to the particles
     {
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
 
-        for(Particle[] p : particles)
+        for(Particle p : particles)
         {
-            for(Particle p2 : p)
-            {
-                if(p2.getX() < minX) minX = p2.getX();
-                if(p2.getY() < minY) minY = p2.getY();
-                if(p2.getX()+p2.getDiameter() > maxX) maxX = p2.getX()+p2.getDiameter();
-                if(p2.getY()+p2.getDiameter() > maxY) maxY = p2.getY()+p2.getDiameter();
-            }
+            if(p.getX() < minX) minX = p.getX();
+            if(p.getY() < minY) minY = p.getY();
+            if(p.getX()+p.getDiameter() > maxX) maxX = p.getX()+p.getDiameter();
+            if(p.getY()+p.getDiameter() > maxY) maxY = p.getY()+p.getDiameter();
         }
 
         this.x = minX;
@@ -84,26 +104,23 @@ public class ParticleGroup
 
     public void randomizeMass(double ranBy)
     { 
-        for(Particle[] p : particles)
-            for(Particle p2 : p)
-                p2.setMass(p2.getMass() + ((Math.random() * ranBy) - (ranBy/2))); 
+        for(Particle p : particles)
+            p.setMass(p.getMass() + ((Math.random() * ranBy) - (ranBy/2))); 
     }
 
     public void randomizeRadius(double ranBy)
     { 
-        for(Particle[] p : particles)
-            for(Particle p2 : p)
-                p2.setRadius(p2.getRadius() + ((Math.random() * ranBy) - (ranBy/2))); 
+        for(Particle p : particles)
+            p.setRadius(p.getRadius() + ((Math.random() * ranBy) - (ranBy/2))); 
     }
 
-    public int totalParticles() { return particles.length * particles[0].length; }
+    public int totalParticles() { return particles.length; }
 
     public double totalParticleMass() 
     { 
         double total = 0;
-        for(Particle[] p : particles)
-            for(Particle p2 : p)
-                total += p2.getMass();
+        for(Particle p : particles)
+            total += p.getMass();
         return total;
     }
 
@@ -119,7 +136,7 @@ public class ParticleGroup
     public double getMass() {return this.mass;}
     public Color getC() {return this.c;}
     public double getGravity() { return this.GRAVITY; }
-    public Particle[][] getParticles() {return this.particles;}
+    public Particle[] getParticles() {return this.particles;}
 
     public void setX(double x) {this.x = x;}
     public void setY(double y) {this.y = y;}
@@ -129,5 +146,5 @@ public class ParticleGroup
     public void setDiameter(double diameter) {this.diameter = diameter; this.radius = diameter/2;}
     public void setMass(double mass) {this.mass = mass;}
     public void setC(Color c) {this.c = c;}
-    public void setParticles(Particle[][] particles) {this.particles = particles;}
+    public void setParticles(Particle[] particles) {this.particles = particles;}
 }

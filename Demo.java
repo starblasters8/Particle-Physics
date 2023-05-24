@@ -3,12 +3,12 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Showcase extends JPanel
+public class Demo extends JPanel
 {
     private int maxFPS = 30;
     private ArrayList<ParticleGroup> pGroups = new ArrayList<ParticleGroup>();
 
-    public Showcase(int w, int h)
+    public Demo(int w, int h)
     {
         this.setPreferredSize(new Dimension(w,h));
         setBackground(Color.BLACK);
@@ -16,7 +16,7 @@ public class Showcase extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,10,1,Color.RED));
+        pGroups.add(new ParticleGroup(50,50,400,400,10,0.1,0.85,Color.RED, w, h));
         for(ParticleGroup p : pGroups)
             p.randomizeMass(0.5);
     }
@@ -41,7 +41,7 @@ public class Showcase extends JPanel
     {
         JFrame frame = new JFrame("Particle Physics");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new Showcase(800,800));
+        frame.getContentPane().add(new Demo(800,800));
         frame.pack();
         frame.setVisible(true);
     }
