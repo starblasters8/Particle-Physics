@@ -74,43 +74,15 @@ public class Particle
         }
     }
 
-    public void particleCollision(Particle p) 
+    public void particleCollision(Particle p)  // Calculates the collision between two particles based on their velocities, masses, and elasticity
     {
         double dx = p.getX() - this.x;
         double dy = p.getY() - this.y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < this.radius + p.getRadius()) 
+        if(distance < this.radius + p.getRadius()) // If they intersect
         {
-            // Calculate new velocities
-            double angle = Math.atan2(dy, dx);
-            double sin = Math.sin(angle);
-            double cos = Math.cos(angle);
-
-            // Rotate this particle's velocity
-            double vx1 = this.vx * cos + this.vy * sin;
-            double vy1 = this.vy * cos - this.vx * sin;
-
-            // Rotate the other particle's velocity
-            double vx2 = p.getVX() * cos + p.getVY() * sin;
-            double vy2 = p.getVY() * cos - p.getVX() * sin;
-
-            // Calculate new velocities based on elastic collision formula
-            double v1f = ((this.mass - p.getMass()) * vx1 + 2 * p.getMass() * vx2) / (this.mass + p.getMass());
-            double v2f = ((p.getMass() - this.mass) * vx2 + 2 * this.mass * vx1) / (this.mass + p.getMass());
-
-            // Rotate the velocities back
-            this.vx = v1f * cos - vy1 * sin;
-            this.vy = vy1 * cos + v1f * sin;
-            p.setVX(v2f * cos - vy2 * sin);
-            p.setVY(vy2 * cos + v2f * sin);
-
-            // Move the particles so they are no longer colliding
-            double overlap = 0.5 * (this.radius + p.getRadius() - distance + 1);
-            this.x -= overlap * cos;
-            this.y -= overlap * sin;
-            p.setX(p.getX() + overlap * cos);
-            p.setY(p.getY() + overlap * sin);
+            
         }
     }
 
