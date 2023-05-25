@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Demo extends JPanel
 {
-    private int maxFPS = 15;
+    private int maxFPS = 30;
     private ArrayList<ParticleGroup> pGroups = new ArrayList<ParticleGroup>();
 
     public Demo(int w, int h)

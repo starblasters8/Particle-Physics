@@ -34,13 +34,10 @@ public class Particle
         checkBoundCollision();
 
         // Calculate acceleration based on force
-        double fx = 0;
         double fy = mass * 9.81; // Gravity
-        ax = fx / mass;
         ay = fy / mass;
 
         // Update velocity based on acceleration
-        vx += ax;
         vy += ay;
 
         // Apply damping to simulate air resistance
@@ -77,56 +74,44 @@ public class Particle
         }
     }
 
-    public boolean checkParticleCollision(Particle p) 
+    public void particleCollision(Particle p) 
     {
-        // Predict the particles' positions after the next update
-        double nextX = x + vx;
-        double nextY = y + vy;
-        double nextPX = p.x + p.vx;
-        double nextPY = p.y + p.vy;
-
-        // Calculate the distance between the predicted positions
-        double dx = nextPX - nextX;
-        double dy = nextPY - nextY;
+        double dx = p.getX() - this.x;
+        double dy = p.getY() - this.y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Check if the predicted positions will collide
-        return distance < radius + p.radius;
-    }
+        if (distance < this.radius + p.getRadius()) 
+        {
+            // Calculate new velocities
+            double angle = Math.atan2(dy, dx);
+            double sin = Math.sin(angle);
+            double cos = Math.cos(angle);
 
-    public void doParticleCollision(Particle p) {
-        double dx = p.x - x;
-        double dy = p.y - y;
-        double distance = Math.sqrt(dx * dx + dy * dy);
-        double nx = dx / distance;
-        double ny = dy / distance;
-        double tx = -ny;
-        double ty = nx;
+            // Rotate this particle's velocity
+            double vx1 = this.vx * cos + this.vy * sin;
+            double vy1 = this.vy * cos - this.vx * sin;
 
-        // Project velocities onto normal and tangent axes
-        double v1n = nx * vx + ny * vy;
-        double v1t = tx * vx + ty * vy;
-        double v2n = nx * p.vx + ny * p.vy;
-        double v2t = tx * p.vx + ty * p.vy;
+            // Rotate the other particle's velocity
+            double vx2 = p.getVX() * cos + p.getVY() * sin;
+            double vy2 = p.getVY() * cos - p.getVX() * sin;
 
-        // Calculate new normal velocities based on conservation of momentum and energy
-        double m1 = mass;
-        double m2 = p.mass;
-        double u1n = v1n * (m1 - m2) / (m1 + m2) + v2n * 2 * m2 / (m1 + m2);
-        double u2n = v2n * (m2 - m1) / (m1 + m2) + v1n * 2 * m1 / (m1 + m2);
+            // Calculate new velocities based on elastic collision formula
+            double v1f = ((this.mass - p.getMass()) * vx1 + 2 * p.getMass() * vx2) / (this.mass + p.getMass());
+            double v2f = ((p.getMass() - this.mass) * vx2 + 2 * this.mass * vx1) / (this.mass + p.getMass());
 
-        // Calculate new tangent velocities
-        double u1t = v1t;
-        double u2t = v2t;
+            // Rotate the velocities back
+            this.vx = v1f * cos - vy1 * sin;
+            this.vy = vy1 * cos + v1f * sin;
+            p.setVX(v2f * cos - vy2 * sin);
+            p.setVY(vy2 * cos + v2f * sin);
 
-        // Convert normal and tangent velocities back to x and y velocities
-        vx = u1n * nx + u1t * tx;
-        vy = u1n * ny + u1t * ty;
-        p.vx = u2n * nx + u2t * tx;
-        p.vy = u2n * ny + u2t * ty;
-
-        update();
-        p.update();
+            // Move the particles so they are no longer colliding
+            double overlap = 0.5 * (this.radius + p.getRadius() - distance + 1);
+            this.x -= overlap * cos;
+            this.y -= overlap * sin;
+            p.setX(p.getX() + overlap * cos);
+            p.setY(p.getY() + overlap * sin);
+        }
     }
 
     public void draw(Graphics2D g, boolean drawOutline) 

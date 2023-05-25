@@ -45,11 +45,10 @@ public class ParticleGroup
 
     public void updateAll()
     { 
-        allParticleCollision();
         for(Particle p : particles)
             p.update();
 
-        fitBoundingBox();
+        allParticleCollision();
     }
 
     public void allParticleCollision()
@@ -60,8 +59,7 @@ public class ParticleGroup
             {
                 if(i != j)
                 {
-                    if(particles[i].checkParticleCollision(particles[j]))
-                        particles[i].doParticleCollision(particles[j]);
+                    particles[i].particleCollision(particles[j]);
                 }
             }
         }
@@ -93,6 +91,7 @@ public class ParticleGroup
 
     public void drawBoundingBox(Graphics2D g, Color c)
     {
+        fitBoundingBox();
         g.setColor(c);
         g.drawRect((int)x, (int)y, (int)w, (int)h);
     }
