@@ -13,6 +13,7 @@ public class Particle
     protected double boundW, boundH; // Width and height of the screen/max bounding box
     protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
     protected double damping = 0.01; // Damping factor to simulate air resistance
+    protected double minVelocity = 0.1; // Minimum velocity threshold
 
     public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundW, double boundH, double boundX, double boundY) 
     {
@@ -44,6 +45,10 @@ public class Particle
         vx *= (1 - damping);
         vy *= (1 - damping);
 
+        // Stop moving if velocity is below the threshold
+        if (Math.abs(vx) < minVelocity) vx = 0;
+        if (Math.abs(vy) < minVelocity) vy = 0;
+
         // Update position based on velocity
         x += vx;
         y += vy;
@@ -71,18 +76,6 @@ public class Particle
         {
             y = boundY;
             vy = -vy * elasticity;
-        }
-    }
-
-    public void particleCollision(Particle p)  // Calculates the collision between two particles based on their velocities, masses, and elasticity
-    {
-        double dx = p.getX() - this.x;
-        double dy = p.getY() - this.y;
-        double distance = Math.sqrt(dx * dx + dy * dy);
-
-        if(distance < this.radius + p.getRadius()) // If they intersect
-        {
-            
         }
     }
 

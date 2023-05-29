@@ -32,15 +32,16 @@ public class ParticleGroup
 
     public void generateParticles()
     {
-        Particle[][] tempParticles = new Particle[(int)Math.floor(w/diameter)][(int)Math.floor(h/diameter)];
+        double spacing = 1.1; // Increase spacing between particles
+        Particle[][] tempParticles = new Particle[(int)Math.floor(w/(diameter * spacing))][(int)Math.floor(h/(diameter * spacing))];
         for(int i = 0; i < tempParticles.length; i++)
             for(int j = 0; j < tempParticles[i].length; j++)
-                tempParticles[i][j] = new Particle(x + (i*diameter), y + (j*diameter), radius, mass, elasticity, c, boundW, boundH, this.x, this.y);
+                tempParticles[i][j] = new Particle(x + (i * diameter * spacing), y + (j * diameter * spacing), radius, mass, elasticity, c, boundW, boundH, this.x, this.y);
         
-        particles = new Particle[tempParticles.length*tempParticles[0].length];
+        particles = new Particle[tempParticles.length * tempParticles[0].length];
         for(int i = 0; i < tempParticles.length; i++)
             for(int j = 0; j < tempParticles[i].length; j++)
-                particles[(i*tempParticles[i].length)+j] = tempParticles[i][j];
+                particles[(i * tempParticles[i].length) + j] = tempParticles[i][j];
     }
 
     public void updateAll()
@@ -51,18 +52,9 @@ public class ParticleGroup
         allParticleCollision();
     }
 
-    public void allParticleCollision()
+    public void allParticleCollision() // Check for collisions between all particles and resolve them based on their masses, velocities, and elasticity
     {
-        for(int i = 0; i < particles.length; i++)
-        {
-            for(int j = 0; j < particles.length; j++)
-            {
-                if(i != j)
-                {
-                    particles[i].particleCollision(particles[j]);
-                }
-            }
-        }
+
     }
     
     public void drawAll(Graphics2D g, boolean drawOutline)
@@ -112,6 +104,12 @@ public class ParticleGroup
     { 
         for(Particle p : particles)
             p.setRadius(p.getRadius() + ((Math.random() * ranBy) - (ranBy/2))); 
+    }
+
+    public void randomizeElasticity(double ranBy)
+    { 
+        for(Particle p : particles)
+            p.setElasticity(p.getElasticity() + ((Math.random() * ranBy) - (ranBy/2))); 
     }
 
     public int totalParticles() { return particles.length; }

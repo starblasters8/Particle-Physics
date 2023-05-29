@@ -20,7 +20,8 @@ public class Demo extends JPanel
         for(ParticleGroup p : pGroups)
         {
             p.randomizeMass(3);
-            p.randomizeVX(0.1);
+            p.randomizeVX(1);
+            p.randomizeElasticity(0.1);
         }            
     }
 
