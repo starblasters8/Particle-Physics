@@ -13,8 +13,9 @@ public class ParticleGroup
 
     protected double elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
     protected double boundW, boundH; // Width and height of the screen/max bounding box
+    protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
 
-    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundW, double boundH)
+    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundW, double boundH, double boundX, double boundY)
     {
         this.x = x;
         this.y = y;
@@ -27,13 +28,15 @@ public class ParticleGroup
         this.elasticity = elasticity;
         this.boundW = boundW;
         this.boundH = boundH;
+        this.boundX = boundX;
+        this.boundY = boundY;
 
         generateParticles();
     }
 
     public void generateParticles() // Generates as many particles as possible in the given space (in a honeycomb pattern) with the given spacing and adds them to the array "particles"
     {
-        double spacing = 1.1; // Increase spacing between particles
+        double spacing = 1.2; // Increase spacing between particles
         ArrayList<Particle> particleList = new ArrayList<Particle>();
 
         double startX = x + radius;
@@ -49,7 +52,7 @@ public class ParticleGroup
 
             for (double xPos = currentX; xPos + radius <= x + w; xPos += diameter * spacing) 
             {
-                Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundW, boundH, x, y);
+                Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundW, boundH, boundX, boundY);
                 particleList.add(p);
             }
 
@@ -111,6 +114,9 @@ public class ParticleGroup
                         p2.setVX(p2.getVX() + p * p2.getMass() * nx * avgElasticity);
                         p2.setVY(p2.getVY() + p * p2.getMass() * ny * avgElasticity);
                     }
+
+                    p1.boundCollision();
+                    p2.boundCollision();
                 }
             }
         } while (collisionResolved);

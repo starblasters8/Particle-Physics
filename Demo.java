@@ -16,11 +16,11 @@ public class Demo extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,30,10,0.80,Color.RED, w, h));
+        pGroups.add(new ParticleGroup(50,50,400,400,30,10,0.80,Color.RED, w, h, 0, 0));
         for(ParticleGroup p : pGroups)
         {
             p.randomizeMass(3);
-            p.randomizeVX(1);
+            p.randomizeVX(5);
             p.randomizeElasticity(0.1);
         }            
     }

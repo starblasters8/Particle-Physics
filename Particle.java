@@ -13,7 +13,7 @@ public class Particle
     protected double boundW, boundH; // Width and height of the screen/max bounding box
     protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
     protected double damping = 0.01; // Damping factor to simulate air resistance
-    protected double minVelocity = 0.1; // Minimum velocity threshold
+    protected double minVelocity = 0.5; // Minimum velocity threshold
 
     public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundW, double boundH, double boundX, double boundY) 
     {
@@ -32,7 +32,7 @@ public class Particle
 
     public void update() 
     {
-        checkBoundCollision();
+        boundCollision();
 
         // Calculate acceleration based on force
         double fy = mass * 9.81; // Gravity
@@ -54,28 +54,22 @@ public class Particle
         y += vy;
     }
 
-    public void checkBoundCollision() 
+    public void boundCollision() // Bounce off walls and check for collision with walls
     {
-        if (x + diameter + vx > boundW) 
+        // Check for collision with left and right walls
+        if (x <= boundX || x + diameter >= boundW) 
         {
-            x = boundW - diameter;
-            vx = -vx * elasticity;
-        } 
-        else if (x + vx < boundX) 
-        {
-            x = boundX;
-            vx = -vx * elasticity;
+            vx = -vx * elasticity; // Reverse the x velocity and apply elasticity
+            if (x <= boundX) x = boundX; // Move the particle inside the bounds if it's outside
+            if (x + diameter >= boundW) x = boundW - diameter; // Move the particle inside the bounds if it's outside
         }
 
-        if (y + diameter + vy > boundH) 
+        // Check for collision with top and bottom walls
+        if (y <= boundY || y + diameter >= boundH) 
         {
-            y = boundH - diameter;
-            vy = -vy * elasticity;
-        } 
-        else if (y + vy < boundY) 
-        {
-            y = boundY;
-            vy = -vy * elasticity;
+            vy = -vy * elasticity; // Reverse the y velocity and apply elasticity
+            if (y <= boundY) y = boundY; // Move the particle inside the bounds if it's outside
+            if (y + diameter >= boundH) y = boundH - diameter; // Move the particle inside the bounds if it's outside
         }
     }
 
