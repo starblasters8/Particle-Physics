@@ -70,33 +70,34 @@ public class ParticleGroup
 
     public void allParticleCollision() // Check for collisions between all particles and resolve them based on their masses, velocities, and elasticity
     {
-        for (int i = 0; i < particles.length; i++) 
+        for (int i = 0; i < particles.length; i++) // Loop through all particles
         {
-            for (int j = i + 1; j < particles.length; j++) 
+            for (int j = i + 1; j < particles.length; j++) // Loop through all particles after the current one
             {
-                Particle p1 = particles[i];
-                Particle p2 = particles[j];
+                Particle p1 = particles[i]; // Get the first particle
+                Particle p2 = particles[j]; // Get the second particle
 
-                double dx = p2.getX() - p1.getX();
-                double dy = p2.getY() - p1.getY();
-                double distance = Math.sqrt(dx * dx + dy * dy);
-                double minDistance = p1.getRadius() + p2.getRadius();
+                double dx = p2.getX() - p1.getX(); // Calculate the x distance between the particles
+                double dy = p2.getY() - p1.getY(); // Calculate the y distance between the particles
+                double distance = Math.sqrt(dx * dx + dy * dy); // Calculate the distance between the particles using the Pythagorean theorem
+                double minDistance = p1.getRadius() + p2.getRadius(); // Calculate the minimum distance between the particles
 
-                if (distance < minDistance) 
+                if (distance < minDistance) // If the particles are closer than the minimum distance
                 {
-                    double nx = (p2.getX() - p1.getX()) / distance;
-                    double ny = (p2.getY() - p1.getY()) / distance;
-                    double p = 2 * (p1.getVX() * nx + p1.getVY() * ny - p2.getVX() * nx - p2.getVY() * ny) / (p1.getMass() + p2.getMass());
-                    double w = minDistance - distance + 1;
+                    double nx = (p2.getX() - p1.getX()) / distance; // Calculate the x component of the collision normal
+                    double ny = (p2.getY() - p1.getY()) / distance; // Calculate the y component of the collision normal
+                    double p = 2 * (p1.getVX() * nx + p1.getVY() * ny - p2.getVX() * nx - p2.getVY() * ny) / (p1.getMass() + p2.getMass()); // Calculate the impulse
+                    double w = minDistance - distance + 1; // Calculate the penetration depth
 
+                    // Move the particles apart based on their masses and the penetration depth
                     p1.setX(p1.getX() - (w * p1.getMass() / (p1.getMass() + p2.getMass())) * nx);
                     p1.setY(p1.getY() - (w * p1.getMass() / (p1.getMass() + p2.getMass())) * ny);
-
                     p2.setX(p2.getX() + (w * p2.getMass() / (p1.getMass() + p2.getMass())) * nx);
                     p2.setY(p2.getY() + (w * p2.getMass() / (p1.getMass() + p2.getMass())) * ny);
 
-                    double avgElasticity = (p1.getElasticity() + p2.getElasticity()) / 2;
+                    double avgElasticity = (p1.getElasticity() + p2.getElasticity()) / 2; // Calculate the average elasticity of the particles
 
+                    // Update the velocities of the particles based on the impulse and the average elasticity
                     p1.setVX(p1.getVX() - p * p1.getMass() * nx * avgElasticity);
                     p1.setVY(p1.getVY() - p * p1.getMass() * ny * avgElasticity);
                     p2.setVX(p2.getVX() + p * p2.getMass() * nx * avgElasticity);
