@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public class ParticleGroup 
 {
@@ -30,18 +31,33 @@ public class ParticleGroup
         generateParticles();
     }
 
-    public void generateParticles()
+    public void generateParticles() // Generates as many particles as possible in the given space (in a honeycomb pattern) with the given spacing and adds them to the array "particles"
     {
         double spacing = 1.1; // Increase spacing between particles
-        Particle[][] tempParticles = new Particle[(int)Math.floor(w/(diameter * spacing))][(int)Math.floor(h/(diameter * spacing))];
-        for(int i = 0; i < tempParticles.length; i++)
-            for(int j = 0; j < tempParticles[i].length; j++)
-                tempParticles[i][j] = new Particle(x + (i * diameter * spacing), y + (j * diameter * spacing), radius, mass, elasticity, c, boundW, boundH, this.x, this.y);
-        
-        particles = new Particle[tempParticles.length * tempParticles[0].length];
-        for(int i = 0; i < tempParticles.length; i++)
-            for(int j = 0; j < tempParticles[i].length; j++)
-                particles[(i * tempParticles[i].length) + j] = tempParticles[i][j];
+        ArrayList<Particle> particleList = new ArrayList<Particle>();
+
+        double startX = x + radius;
+        double startY = y + radius;
+
+        boolean shiftRow = false;
+
+        for (double yPos = startY; yPos + radius <= y + h; yPos += diameter * Math.sqrt(3) / 2 * spacing) 
+        {
+            double currentX = startX;
+            if (shiftRow)
+                currentX += diameter * spacing / 2;
+
+            for (double xPos = currentX; xPos + radius <= x + w; xPos += diameter * spacing) 
+            {
+                Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundW, boundH, x, y);
+                particleList.add(p);
+            }
+
+            shiftRow = !shiftRow;
+        }
+
+        particles = new Particle[particleList.size()];
+        particles = particleList.toArray(particles);
     }
 
     public void updateAll()
@@ -54,7 +70,40 @@ public class ParticleGroup
 
     public void allParticleCollision() // Check for collisions between all particles and resolve them based on their masses, velocities, and elasticity
     {
+        for (int i = 0; i < particles.length; i++) 
+        {
+            for (int j = i + 1; j < particles.length; j++) 
+            {
+                Particle p1 = particles[i];
+                Particle p2 = particles[j];
 
+                double dx = p2.getX() - p1.getX();
+                double dy = p2.getY() - p1.getY();
+                double distance = Math.sqrt(dx * dx + dy * dy);
+                double minDistance = p1.getRadius() + p2.getRadius();
+
+                if (distance < minDistance) 
+                {
+                    double nx = (p2.getX() - p1.getX()) / distance;
+                    double ny = (p2.getY() - p1.getY()) / distance;
+                    double p = 2 * (p1.getVX() * nx + p1.getVY() * ny - p2.getVX() * nx - p2.getVY() * ny) / (p1.getMass() + p2.getMass());
+                    double w = minDistance - distance + 1;
+
+                    p1.setX(p1.getX() - (w * p1.getMass() / (p1.getMass() + p2.getMass())) * nx);
+                    p1.setY(p1.getY() - (w * p1.getMass() / (p1.getMass() + p2.getMass())) * ny);
+
+                    p2.setX(p2.getX() + (w * p2.getMass() / (p1.getMass() + p2.getMass())) * nx);
+                    p2.setY(p2.getY() + (w * p2.getMass() / (p1.getMass() + p2.getMass())) * ny);
+
+                    double avgElasticity = (p1.getElasticity() + p2.getElasticity()) / 2;
+
+                    p1.setVX(p1.getVX() - p * p1.getMass() * nx * avgElasticity);
+                    p1.setVY(p1.getVY() - p * p1.getMass() * ny * avgElasticity);
+                    p2.setVX(p2.getVX() + p * p2.getMass() * nx * avgElasticity);
+                    p2.setVY(p2.getVY() + p * p2.getMass() * ny * avgElasticity);
+                }
+            }
+        }
     }
     
     public void drawAll(Graphics2D g, boolean drawOutline)
