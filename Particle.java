@@ -13,7 +13,7 @@ public class Particle
     protected double boundW, boundH; // Width and height of the screen/max bounding box
     protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
     protected double damping = 0.01; // Damping factor to simulate air resistance
-    protected double minVelocity = 0.5; // Minimum velocity threshold
+    protected double minVelocity = 0.15; // Minimum velocity threshold
 
     public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH) 
     {

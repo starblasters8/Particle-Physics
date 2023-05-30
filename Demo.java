@@ -2,6 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.*;
 
 public class Demo extends JPanel
 {
@@ -28,9 +29,19 @@ public class Demo extends JPanel
             p.randomizeMass(3);
             p.randomizeVX(5);
             p.randomizeElasticity(0.1);
-        }            
+        }
+
+        // Create a ScheduledExecutorService to run the calculations on a separate thread
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(new Runnable() 
+        {
+            public void run() {
+                for (ParticleGroup p : pGroups) {
+                    p.updateAll();
+                }
+            }
+        }, 0, 1000 / maxFPS, TimeUnit.MILLISECONDS);
     }
-    
 
     public void paintComponent(Graphics gTemp)
     {
@@ -38,10 +49,9 @@ public class Demo extends JPanel
         super.paintComponent(gTemp);
         Graphics2D g = (Graphics2D)gTemp;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Anti-aliasing
- 
+
         for(ParticleGroup p : pGroups)
         {
-            p.updateAll();
             p.drawAll(g, true, true);
             p.drawBoundingBox(g, Color.WHITE);
         }
