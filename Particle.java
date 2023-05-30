@@ -64,30 +64,41 @@ public class Particle
         return distance < minDistance;
     }
 
+
     public void resolveCollision(Particle other) // Resolves the collision between this particle and the other particle
     {
+        // Calculate the distance between the two particles
         double dx = other.getX() - this.x;
         double dy = other.getY() - this.y;
         double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Calculate the minimum distance required for the particles to not overlap
         double minDistance = this.radius + other.getRadius();
 
+        // Calculate the normal vector between the two particles
         double nx = (other.getX() - this.x) / distance;
         double ny = (other.getY() - this.y) / distance;
+
+        // Calculate the impulse required to separate the particles
         double p = 2 * (this.vx * nx + this.vy * ny - other.getVX() * nx - other.getVY() * ny) / (this.mass + other.getMass());
+
+        // Calculate the amount of overlap between the particles
         double w = minDistance - distance + 1;
 
+        // Move the particles apart by an amount proportional to their masses
         this.x -= (w * this.mass / (this.mass + other.getMass())) * nx;
         this.y -= (w * this.mass / (this.mass + other.getMass())) * ny;
         other.setX(other.getX() + (w * other.getMass() / (this.mass + other.getMass())) * nx);
         other.setY(other.getY() + (w * other.getMass() / (this.mass + other.getMass())) * ny);
 
+        // Apply the impulse to the particles
         double avgElasticity = (this.elasticity + other.getElasticity()) / 2;
-
         this.vx -= p * this.mass * nx * avgElasticity;
         this.vy -= p * this.mass * ny * avgElasticity;
         other.setVX(other.getVX() + p * other.getMass() * nx * avgElasticity);
         other.setVY(other.getVY() + p * other.getMass() * ny * avgElasticity);
 
+        // Ensure the particles stay within the bounds of the simulation
         this.boundCollision();
         other.boundCollision();
     }
