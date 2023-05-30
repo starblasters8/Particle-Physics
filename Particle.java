@@ -13,7 +13,7 @@ public class Particle
     protected double boundW, boundH; // Width and height of the screen/max bounding box
     protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
     protected double damping = 0.01; // Damping factor to simulate air resistance
-    protected double minVelocity = 0.15; // Minimum velocity threshold
+    protected double minVelocity = 0.01; // Minimum velocity threshold
 
     public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH) 
     {
@@ -34,12 +34,7 @@ public class Particle
     {
         boundCollision();
 
-        // Calculate acceleration based on force
-        double fy = mass * 9.81; // Gravity
-        ay = fy / mass;
-
-        // Update velocity based on acceleration
-        vy += ay;
+        vy += 9.81; // Gravity
 
         // Apply damping to simulate air resistance
         vx *= (1 - damping);

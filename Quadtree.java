@@ -5,7 +5,7 @@ import java.util.List;
 public class Quadtree
 {
     private final int MAX_OBJECTS = 5;
-    private final int MAX_LEVELS = 10;
+    private final int MAX_LEVELS = 5;
 
     private int level;
     private List<Particle> objects;
