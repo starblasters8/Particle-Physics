@@ -1,39 +1,118 @@
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Quadtree
 {
-    private double x, y, w, h; // X and Y coordinates of top left corner, width and height of the boundary
-    private int level = 1; // Level of this quadtree
+    private final int MAX_OBJECTS = 5;
+    private final int MAX_LEVELS = 10;
 
-    private int maxParticles = 4; // Maximum number of particles in a quadtree before it splits
-    private int maxLevel = 5; // Maximum number of levels in a quadtree
-    
-    public Quadtree(double x, double y, double w, double h)
+    private int level;
+    private List<Particle> objects;
+    private Rectangle bounds;
+    private Quadtree[] nodes;
+
+    public Quadtree(int level, Rectangle bounds) 
     {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        this.level = level;
+        this.objects = new ArrayList<>();
+        this.bounds = bounds;
+        this.nodes = new Quadtree[4];
     }
 
-    public ArrayList<Particle[]> doQuadTree(Particle[] particles)
+    public void clear() 
     {
-        ArrayList<Particle[]> particleGroups = new ArrayList<Particle[]>();
-        if(level <= maxLevel && particles.length > 4)
+        objects.clear();
+
+        for (int i = 0; i < nodes.length; i++) 
         {
-            
+            if (nodes[i] != null) 
+            {
+                nodes[i].clear();
+                nodes[i] = null;
+            }
+        }
+    }
+
+    private void split() 
+    {
+        int subWidth = (int) (bounds.getWidth() / 2);
+        int subHeight = (int) (bounds.getHeight() / 2);
+        int x = (int) bounds.getX();
+        int y = (int) bounds.getY();
+
+        nodes[0] = new Quadtree(level + 1, new Rectangle(x + subWidth, y, subWidth, subHeight));
+        nodes[1] = new Quadtree(level + 1, new Rectangle(x, y, subWidth, subHeight));
+        nodes[2] = new Quadtree(level + 1, new Rectangle(x, y + subHeight, subWidth, subHeight));
+        nodes[3] = new Quadtree(level + 1, new Rectangle(x + subWidth, y + subHeight, subWidth, subHeight));
+    }
+
+    private int getIndex(Particle p) 
+    {
+        int index = -1;
+        double verticalMidpoint = bounds.getX() + (bounds.getWidth() / 2);
+        double horizontalMidpoint = bounds.getY() + (bounds.getHeight() / 2);
+
+        boolean topQuadrant = (p.getY() < horizontalMidpoint && p.getY() + p.getDiameter() < horizontalMidpoint);
+        boolean bottomQuadrant = (p.getY() > horizontalMidpoint);
+
+        if (p.getX() < verticalMidpoint && p.getX() + p.getDiameter() < verticalMidpoint) 
+        {
+            if (topQuadrant)
+                index = 1;
+            else if (bottomQuadrant)
+                index = 2;
+        } 
+        else if (p.getX() > verticalMidpoint) 
+        {
+            if (topQuadrant)
+                index = 0;
+            else if (bottomQuadrant)
+                index = 3;
         }
 
-        else
-            particleGroups.add(particles);
-            
-        return particleGroups;
+        return index;
     }
 
+    public void insert(Particle p) 
+    {
+        if (nodes[0] != null) 
+        {
+            int index = getIndex(p);
 
+            if (index != -1) {
+                nodes[index].insert(p);
+                return;
+            }
+        }
 
-    public int getMaxLevel(){return maxLevel;}
-    public void setMaxLevel(int maxLevel){this.maxLevel = maxLevel;}
-    public int getMaxParticles(){return maxParticles;}
-    public void setMaxParticles(int maxParticles){this.maxParticles = maxParticles;}
+        objects.add(p);
+
+        if (objects.size() > MAX_OBJECTS && level < MAX_LEVELS) 
+        {
+            if (nodes[0] == null)
+                split();
+
+            int i = 0;
+            while (i < objects.size()) 
+            {
+                int index = getIndex(objects.get(i));
+                if (index != -1)
+                    nodes[index].insert(objects.remove(i));
+                else
+                    i++;
+            }
+        }
+    }
+
+    public List<Particle> retrieve(List<Particle> returnObjects, Particle p) 
+    {
+        int index = getIndex(p);
+        if (index != -1 && nodes[0] != null) 
+            nodes[index].retrieve(returnObjects, p);
+
+        returnObjects.addAll(objects);
+
+        return returnObjects;
+    }
 }

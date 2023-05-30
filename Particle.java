@@ -54,6 +54,44 @@ public class Particle
         y += vy;
     }
 
+    public boolean isColliding(Particle other) // Returns true if this particle is colliding with the other particle
+    {
+        double dx = other.getX() - this.x;
+        double dy = other.getY() - this.y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        double minDistance = this.radius + other.getRadius();
+
+        return distance < minDistance;
+    }
+
+    public void resolveCollision(Particle other) // Resolves the collision between this particle and the other particle
+    {
+        double dx = other.getX() - this.x;
+        double dy = other.getY() - this.y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        double minDistance = this.radius + other.getRadius();
+
+        double nx = (other.getX() - this.x) / distance;
+        double ny = (other.getY() - this.y) / distance;
+        double p = 2 * (this.vx * nx + this.vy * ny - other.getVX() * nx - other.getVY() * ny) / (this.mass + other.getMass());
+        double w = minDistance - distance + 1;
+
+        this.x -= (w * this.mass / (this.mass + other.getMass())) * nx;
+        this.y -= (w * this.mass / (this.mass + other.getMass())) * ny;
+        other.setX(other.getX() + (w * other.getMass() / (this.mass + other.getMass())) * nx);
+        other.setY(other.getY() + (w * other.getMass() / (this.mass + other.getMass())) * ny);
+
+        double avgElasticity = (this.elasticity + other.getElasticity()) / 2;
+
+        this.vx -= p * this.mass * nx * avgElasticity;
+        this.vy -= p * this.mass * ny * avgElasticity;
+        other.setVX(other.getVX() + p * other.getMass() * nx * avgElasticity);
+        other.setVY(other.getVY() + p * other.getMass() * ny * avgElasticity);
+
+        this.boundCollision();
+        other.boundCollision();
+    }
+
     public void boundCollision() // Bounce off walls and check for collision with walls
     {
         // Check for collision with left and right walls
