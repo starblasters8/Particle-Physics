@@ -7,16 +7,22 @@ public class Demo extends JPanel
 {
     private int maxFPS = 30;
     private ArrayList<ParticleGroup> pGroups = new ArrayList<ParticleGroup>();
+    private double boundX, boundY, boundW, boundH;
 
     public Demo(int w, int h)
     {
         this.setPreferredSize(new Dimension(w,h));
         setBackground(Color.BLACK);
 
+        boundX = 0;
+        boundY = 0;
+        boundW = w;
+        boundH = h;
+
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,30,10,0.80,Color.RED, w, h, 0, 0));
+        pGroups.add(new ParticleGroup(50,50,400,400,30,10,0.80,Color.RED, boundX,boundY,boundW,boundH));
         for(ParticleGroup p : pGroups)
         {
             p.randomizeMass(3);
@@ -24,6 +30,7 @@ public class Demo extends JPanel
             p.randomizeElasticity(0.1);
         }            
     }
+    
 
     public void paintComponent(Graphics gTemp)
     {
@@ -35,7 +42,7 @@ public class Demo extends JPanel
         for(ParticleGroup p : pGroups)
         {
             p.updateAll();
-            p.drawAll(g, true);
+            p.drawAll(g, true, true);
             p.drawBoundingBox(g, Color.WHITE);
         }
     }

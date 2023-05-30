@@ -15,7 +15,7 @@ public class Particle
     protected double damping = 0.01; // Damping factor to simulate air resistance
     protected double minVelocity = 0.5; // Minimum velocity threshold
 
-    public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundW, double boundH, double boundX, double boundY) 
+    public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH) 
     {
         this.x = x;
         this.y = y;
@@ -24,10 +24,10 @@ public class Particle
         this.mass = mass;
         this.c = c;
         this.elasticity = elasticity;
-        this.boundW = boundW;
-        this.boundH = boundH;
         this.boundX = boundX;
         this.boundY = boundY;
+        this.boundW = boundW;
+        this.boundH = boundH;
     }
 
     public void update() 

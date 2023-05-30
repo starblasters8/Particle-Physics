@@ -15,7 +15,7 @@ public class ParticleGroup
     protected double boundW, boundH; // Width and height of the screen/max bounding box
     protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
 
-    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundW, double boundH, double boundX, double boundY)
+    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH)
     {
         this.x = x;
         this.y = y;
@@ -26,10 +26,10 @@ public class ParticleGroup
         this.diameter = radius*2;
         this.c = c;
         this.elasticity = elasticity;
-        this.boundW = boundW;
-        this.boundH = boundH;
         this.boundX = boundX;
         this.boundY = boundY;
+        this.boundW = boundW;
+        this.boundH = boundH;
 
         generateParticles();
     }
@@ -52,7 +52,7 @@ public class ParticleGroup
 
             for (double xPos = currentX; xPos + radius <= x + w; xPos += diameter * spacing) 
             {
-                Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundW, boundH, boundX, boundY);
+                Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundX, boundY, boundW, boundH);
                 particleList.add(p);
             }
 
@@ -122,10 +122,16 @@ public class ParticleGroup
         } while (collisionResolved);
     }
     
-    public void drawAll(Graphics2D g, boolean drawOutline)
+    public void drawAll(Graphics2D g, boolean drawOutline, boolean drawBounds)
     {
         for(Particle p : particles)
             p.draw(g, drawOutline);
+
+        if(drawBounds)
+        {
+            g.setColor(Color.RED);
+            g.drawRect((int)boundX, (int)boundY, (int)(boundW-boundX), (int)(boundH-boundY));
+        }
     }
 
     public void fitBoundingBox() // Fits the bounding box to the particles
@@ -199,6 +205,9 @@ public class ParticleGroup
     public double getMass() {return this.mass;}
     public Color getC() {return this.c;}
     public Particle[] getParticles() {return this.particles;}
+    public double getElasticity() {return this.elasticity;}
+    public double getBoundW() {return this.boundW;}
+    public double getBoundH() {return this.boundH;}
 
     public void setX(double x) {this.x = x;}
     public void setY(double y) {this.y = y;}
@@ -209,4 +218,6 @@ public class ParticleGroup
     public void setMass(double mass) {this.mass = mass;}
     public void setC(Color c) {this.c = c;}
     public void setParticles(Particle[] particles) {this.particles = particles;}
+    public void setBoundW(double boundW) {this.boundW = boundW;}    
+    public void setBoundH(double boundH) {this.boundH = boundH;}
 }
