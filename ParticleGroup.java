@@ -6,18 +6,18 @@ import java.util.List;
 
 public class ParticleGroup 
 {
-    protected double x, y; // X and Y coordinates of top left corner
-    protected double w, h; // Width and height
+    protected float x, y; // X and Y coordinates of top left corner
+    protected float w, h; // Width and height
     protected Particle[] particles; // Particles in the group
     protected Color c; // Color
-    protected double radius, mass; // Radius and mass
-    protected double diameter; // Diameter
+    protected float radius, mass; // Radius and mass
+    protected float diameter; // Diameter
 
-    protected double elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
-    protected double boundW, boundH; // Width and height of the screen/max bounding box
-    protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
+    protected float elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
+    protected float boundW, boundH; // Width and height of the screen/max bounding box
+    protected float boundX, boundY; // X and Y coordinates of top left corner of bounding box
 
-    public ParticleGroup(double x, double y, double w, double h, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH)
+    public ParticleGroup(float x, float y, float w, float h, float radius, float mass, float elasticity, Color c, float boundX, float boundY, float boundW, float boundH)
     {
         this.x = x;
         this.y = y;
@@ -38,21 +38,21 @@ public class ParticleGroup
 
     public void generateParticles() // Generates as many particles as possible in the given space (in a honeycomb pattern) with the given spacing and adds them to the array "particles"
     {
-        double spacing = 1.2; // Increase spacing between particles
+        float spacing = 1.2f; // Increase spacing between particles
         ArrayList<Particle> particleList = new ArrayList<Particle>();
 
-        double startX = x + radius;
-        double startY = y + radius;
+        float startX = x + radius;
+        float startY = y + radius;
 
         boolean shiftRow = false;
 
-        for (double yPos = startY; yPos + radius <= y + h; yPos += diameter * Math.sqrt(3) / 2 * spacing) 
+        for (float yPos = startY; yPos + radius <= y + h; yPos += diameter * Math.sqrt(3) / 2 * spacing) 
         {
-            double currentX = startX;
+            float currentX = startX;
             if (shiftRow)
                 currentX += diameter * spacing / 2;
 
-            for (double xPos = currentX; xPos + radius <= x + w; xPos += diameter * spacing) 
+            for (float xPos = currentX; xPos + radius <= x + w; xPos += diameter * spacing) 
             {
                 Particle p = new Particle(xPos, yPos, radius, mass, elasticity, c, boundX, boundY, boundW, boundH);
                 particleList.add(p);
@@ -116,7 +116,7 @@ public class ParticleGroup
 
     public void fitBoundingBox() // Fits the bounding box to the particles
     {
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+        float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY = Float.MIN_VALUE;
 
         for(Particle p : particles)
         {
@@ -139,65 +139,65 @@ public class ParticleGroup
         g.drawRect((int)x, (int)y, (int)w, (int)h);
     }
 
-    public void randomizeVX(double ranBy)
+    public void randomizeVX(float ranBy)
     { 
         for(Particle p : particles)
-            p.setVX(p.getVX() + ((Math.random() * ranBy) - (ranBy/2))); 
+            p.setVX((float)(p.getVX() + ((Math.random() * ranBy) - (ranBy/2)))); 
     }
 
-    public void randomizeMass(double ranBy)
+    public void randomizeMass(float ranBy)
     { 
         for(Particle p : particles)
-            p.setMass(p.getMass() + ((Math.random() * ranBy) - (ranBy/2))); 
+            p.setMass((float)(p.getMass() + ((Math.random() * ranBy) - (ranBy/2)))); 
     }
 
-    public void randomizeRadius(double ranBy)
+    public void randomizeRadius(float ranBy)
     { 
         for(Particle p : particles)
-            p.setRadius(p.getRadius() + ((Math.random() * ranBy) - (ranBy/2))); 
+            p.setRadius((float)(p.getRadius() + ((Math.random() * ranBy) - (ranBy/2)))); 
     }
 
-    public void randomizeElasticity(double ranBy)
+    public void randomizeElasticity(float ranBy)
     { 
         for(Particle p : particles)
-            p.setElasticity(p.getElasticity() + ((Math.random() * ranBy) - (ranBy/2))); 
+            p.setElasticity((float)(p.getElasticity() + ((Math.random() * ranBy) - (ranBy/2)))); 
     }
 
     public int totalParticles() { return particles.length; }
 
-    public double totalParticleMass() 
+    public float totalParticleMass() 
     { 
-        double total = 0;
+        float total = 0;
         for(Particle p : particles)
             total += p.getMass();
         return total;
     }
 
-    public double averageParticleMass() { return totalParticleMass() / totalParticles(); }
+    public float averageParticleMass() { return totalParticleMass() / totalParticles(); }
 
     // Standard getters and setters
-    public double getX() {return this.x;}
-    public double getY() {return this.y;}
-    public double getW() {return this.w;}
-    public double getH() {return this.h;}
-    public double getRadius() {return this.radius;}
-    public double getDiameter() {return this.diameter;}
-    public double getMass() {return this.mass;}
+    public float getX() {return this.x;}
+    public float getY() {return this.y;}
+    public float getW() {return this.w;}
+    public float getH() {return this.h;}
+    public float getRadius() {return this.radius;}
+    public float getDiameter() {return this.diameter;}
+    public float getMass() {return this.mass;}
     public Color getC() {return this.c;}
     public Particle[] getParticles() {return this.particles;}
-    public double getElasticity() {return this.elasticity;}
-    public double getBoundW() {return this.boundW;}
-    public double getBoundH() {return this.boundH;}
+    public float getElasticity() {return this.elasticity;}
+    public float getBoundW() {return this.boundW;}
+    public float getBoundH() {return this.boundH;}
 
-    public void setX(double x) {this.x = x;}
-    public void setY(double y) {this.y = y;}
-    public void setW(double w) {this.w = w;}
-    public void setH(double h) {this.h = h;}
-    public void setRadius(double radius) {this.radius = radius; this.diameter = radius*2;}
-    public void setDiameter(double diameter) {this.diameter = diameter; this.radius = diameter/2;}
-    public void setMass(double mass) {this.mass = mass;}
+    public void setX(float x) {this.x = x;}
+    public void setY(float y) {this.y = y;}
+    public void setW(float w) {this.w = w;}
+    public void setH(float h) {this.h = h;}
+    public void setRadius(float radius) {this.radius = radius; this.diameter = radius*2;}
+    public void setDiameter(float diameter) {this.diameter = diameter; this.radius = diameter/2;}
+    public void setMass(float mass) {this.mass = mass;}
     public void setC(Color c) {this.c = c;}
     public void setParticles(Particle[] particles) {this.particles = particles;}
-    public void setBoundW(double boundW) {this.boundW = boundW;}    
-    public void setBoundH(double boundH) {this.boundH = boundH;}
+    public void setBoundW(float boundW) {this.boundW = boundW;}    
+    public void setBoundH(float boundH) {this.boundH = boundH;}
 }

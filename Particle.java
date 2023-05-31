@@ -3,19 +3,19 @@ import java.awt.Graphics2D;
 
 public class Particle 
 {
-    protected double x, y; // X and Y coordinates of top left corner
-    protected double vx = 0, vy = 0; // X and Y velocities
-    protected double ax = 0, ay = 0; // X and Y accelerations
-    protected double radius, mass; // Radius and mass
-    protected double diameter; // Diameter
+    protected float x, y; // X and Y coordinates of top left corner
+    protected float vx = 0, vy = 0; // X and Y velocities
+    protected float ax = 0, ay = 0; // X and Y accelerations
+    protected float radius, mass; // Radius and mass
+    protected float diameter; // Diameter
     protected Color c; // Color
-    protected double elasticity = 1; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
-    protected double boundW, boundH; // Width and height of the screen/max bounding box
-    protected double boundX, boundY; // X and Y coordinates of top left corner of bounding box
-    protected double damping = 0.01; // Damping factor to simulate air resistance
-    protected double minVelocity = 0.01; // Minimum velocity threshold
+    protected float elasticity = 1; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
+    protected float boundW, boundH; // Width and height of the screen/max bounding box
+    protected float boundX, boundY; // X and Y coordinates of top left corner of bounding box
+    protected float damping = 0.01f; // Damping factor to simulate air resistance
+    protected float minVelocity = 0.01f; // Minimum velocity threshold
 
-    public Particle(double x, double y, double radius, double mass, double elasticity, Color c, double boundX, double boundY, double boundW, double boundH) 
+    public Particle(float x, float y, float radius, float mass, float elasticity, Color c, float boundX, float boundY, float boundW, float boundH) 
     {
         this.x = x;
         this.y = y;
@@ -51,10 +51,10 @@ public class Particle
 
     public boolean isColliding(Particle other) // Returns true if this particle is colliding with the other particle
     {
-        double dx = other.getX() - this.x;
-        double dy = other.getY() - this.y;
-        double distance = Math.sqrt(dx * dx + dy * dy);
-        double minDistance = this.radius + other.getRadius();
+        float dx = other.getX() - this.x;
+        float dy = other.getY() - this.y;
+        float distance = (float)(Math.sqrt(dx * dx + dy * dy));
+        float minDistance = this.radius + other.getRadius();
 
         return distance < minDistance;
     }
@@ -63,22 +63,22 @@ public class Particle
     public void resolveCollision(Particle other) // Resolves the collision between this particle and the other particle
     {
         // Calculate the distance between the two particles
-        double dx = other.getX() - this.x;
-        double dy = other.getY() - this.y;
-        double distance = Math.sqrt(dx * dx + dy * dy);
+        float dx = other.getX() - this.x;
+        float dy = other.getY() - this.y;
+        float distance = (float)(Math.sqrt(dx * dx + dy * dy));
 
         // Calculate the minimum distance required for the particles to not overlap
-        double minDistance = this.radius + other.getRadius();
+        float minDistance = this.radius + other.getRadius();
 
         // Calculate the normal vector between the two particles
-        double nx = (other.getX() - this.x) / distance;
-        double ny = (other.getY() - this.y) / distance;
+        float nx = (other.getX() - this.x) / distance;
+        float ny = (other.getY() - this.y) / distance;
 
         // Calculate the impulse required to separate the particles
-        double p = 2 * (this.vx * nx + this.vy * ny - other.getVX() * nx - other.getVY() * ny) / (this.mass + other.getMass());
+        float p = 2 * (this.vx * nx + this.vy * ny - other.getVX() * nx - other.getVY() * ny) / (this.mass + other.getMass());
 
         // Calculate the amount of overlap between the particles
-        double w = minDistance - distance + 1;
+        float w = minDistance - distance + 1;
 
         // Move the particles apart by an amount proportional to their masses
         this.x -= (w * this.mass / (this.mass + other.getMass())) * nx;
@@ -87,7 +87,7 @@ public class Particle
         other.setY(other.getY() + (w * other.getMass() / (this.mass + other.getMass())) * ny);
 
         // Apply the impulse to the particles
-        double avgElasticity = (this.elasticity + other.getElasticity()) / 2;
+        float avgElasticity = (this.elasticity + other.getElasticity()) / 2;
         this.vx -= p * this.mass * nx * avgElasticity;
         this.vy -= p * this.mass * ny * avgElasticity;
         other.setVX(other.getVX() + p * other.getMass() * nx * avgElasticity);
@@ -129,31 +129,31 @@ public class Particle
     }
 
     // Standard getters and setters
-    public double getX() {
+    public float getX() {
         return this.x;
     }
 
-    public double getY() {
+    public float getY() {
         return this.y;
     }
 
-    public double getVX() {
+    public float getVX() {
         return this.vx;
     }
 
-    public double getVY() {
+    public float getVY() {
         return this.vy;
     }
 
-    public double getRadius() {
+    public float getRadius() {
         return this.radius;
     }
 
-    public double getDiameter() {
+    public float getDiameter() {
         return this.diameter;
     }
 
-    public double getMass() {
+    public float getMass() {
         return this.mass;
     }
 
@@ -161,45 +161,45 @@ public class Particle
         return this.c;
     }
 
-    public double getElasticity() {
+    public float getElasticity() {
         return this.elasticity;
     }
 
-    public double getBoundW() {
+    public float getBoundW() {
         return this.boundW;
     }
 
-    public double getBoundH() {
+    public float getBoundH() {
         return this.boundH;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    public void setVX(double vx) {
+    public void setVX(float vx) {
         this.vx = vx;
     }
 
-    public void setVY(double vy) {
+    public void setVY(float vy) {
         this.vy = vy;
     }
 
-    public void setRadius(double radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
         this.diameter = radius * 2;
     }
 
-    public void setDiameter(double diameter) {
+    public void setDiameter(float diameter) {
         this.diameter = diameter;
         this.radius = diameter / 2;
     }
 
-    public void setMass(double mass) {
+    public void setMass(float mass) {
         this.mass = mass;
     }
 
@@ -207,15 +207,15 @@ public class Particle
         this.c = c;
     }
 
-    public void setElasticity(double elasticity) {
+    public void setElasticity(float elasticity) {
         this.elasticity = elasticity;
     }
 
-    public void setBoundW(double boundW) {
+    public void setBoundW(float boundW) {
         this.boundW = boundW;
     }
 
-    public void setBoundH(double boundH) {
+    public void setBoundH(float boundH) {
         this.boundH = boundH;
     }
 }

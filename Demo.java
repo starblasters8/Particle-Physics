@@ -8,7 +8,7 @@ public class Demo extends JPanel
 {
     private int maxFPS = 30;
     private ArrayList<ParticleGroup> pGroups = new ArrayList<ParticleGroup>();
-    private double boundX, boundY, boundW, boundH;
+    private float boundX, boundY, boundW, boundH;
 
     public Demo(int w, int h)
     {
@@ -23,22 +23,22 @@ public class Demo extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,15,10,0.80,Color.RED, boundX,boundY,boundW,boundH));
+        pGroups.add(new ParticleGroup(50,50,400,400,15,10,0.80f,Color.RED,boundX,boundY,boundW,boundH));
         for(ParticleGroup p : pGroups)
         {
             p.randomizeMass(3);
             p.randomizeVX(5);
-            p.randomizeElasticity(0.1);
+            p.randomizeElasticity(0.1f);
         }
 
         // Create a ScheduledExecutorService to run the calculations on a separate thread
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(new Runnable() 
         {
-            public void run() {
-                for (ParticleGroup p : pGroups) {
+            public void run() 
+            {
+                for (ParticleGroup p : pGroups) 
                     p.updateAll();
-                }
             }
         }, 0, 1000 / maxFPS, TimeUnit.MILLISECONDS);
     }
