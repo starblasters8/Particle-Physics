@@ -23,7 +23,7 @@ public class Demo extends JPanel
         Timer timer = new Timer(1000/maxFPS, new ActionListener() {public void actionPerformed(ActionEvent e) 
         {   repaint();  }});    timer.start();
 
-        pGroups.add(new ParticleGroup(50,50,400,400,25,10,0.80,Color.RED, boundX,boundY,boundW,boundH));
+        pGroups.add(new ParticleGroup(50,50,400,400,15,10,0.80,Color.RED, boundX,boundY,boundW,boundH));
         for(ParticleGroup p : pGroups)
         {
             p.randomizeMass(3);

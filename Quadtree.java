@@ -2,10 +2,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Quadtree
+public class Quadtree 
 {
-    private final int MAX_OBJECTS = 5;
-    private final int MAX_LEVELS = 5;
+    private static final int MAX_OBJECTS = 5;
+    private static final int MAX_LEVELS = 5;
 
     private int level;
     private List<Particle> objects;
@@ -15,7 +15,7 @@ public class Quadtree
     public Quadtree(int level, Rectangle bounds) 
     {
         this.level = level;
-        this.objects = new ArrayList<>();
+        this.objects = new ArrayList<>(MAX_OBJECTS);
         this.bounds = bounds;
         this.nodes = new Quadtree[4];
     }
@@ -36,10 +36,10 @@ public class Quadtree
 
     private void split() 
     {
-        int subWidth = (int) (bounds.getWidth() / 2);
-        int subHeight = (int) (bounds.getHeight() / 2);
-        int x = (int) bounds.getX();
-        int y = (int) bounds.getY();
+        int subWidth = bounds.width / 2;
+        int subHeight = bounds.height / 2;
+        int x = bounds.x;
+        int y = bounds.y;
 
         nodes[0] = new Quadtree(level + 1, new Rectangle(x + subWidth, y, subWidth, subHeight));
         nodes[1] = new Quadtree(level + 1, new Rectangle(x, y, subWidth, subHeight));
@@ -49,29 +49,18 @@ public class Quadtree
 
     private int getIndex(Particle p) 
     {
-        int index = -1;
-        double verticalMidpoint = bounds.getX() + (bounds.getWidth() / 2);
-        double horizontalMidpoint = bounds.getY() + (bounds.getHeight() / 2);
+        double verticalMidpoint = bounds.x + bounds.width / 2.0;
+        double horizontalMidpoint = bounds.y + bounds.height / 2.0;
 
-        boolean topQuadrant = (p.getY() < horizontalMidpoint && p.getY() + p.getDiameter() < horizontalMidpoint);
-        boolean bottomQuadrant = (p.getY() > horizontalMidpoint);
+        boolean topQuadrant = p.getY() < horizontalMidpoint && p.getY() + p.getDiameter() < horizontalMidpoint;
+        boolean bottomQuadrant = p.getY() > horizontalMidpoint;
 
         if (p.getX() < verticalMidpoint && p.getX() + p.getDiameter() < verticalMidpoint) 
-        {
-            if (topQuadrant)
-                index = 1;
-            else if (bottomQuadrant)
-                index = 2;
-        } 
+            return topQuadrant ? 1 : bottomQuadrant ? 2 : -1;
         else if (p.getX() > verticalMidpoint) 
-        {
-            if (topQuadrant)
-                index = 0;
-            else if (bottomQuadrant)
-                index = 3;
-        }
+            return topQuadrant ? 0 : bottomQuadrant ? 3 : -1;
 
-        return index;
+        return -1;
     }
 
     public void insert(Particle p) 
@@ -80,7 +69,8 @@ public class Quadtree
         {
             int index = getIndex(p);
 
-            if (index != -1) {
+            if (index != -1) 
+            {
                 nodes[index].insert(p);
                 return;
             }
@@ -108,7 +98,7 @@ public class Quadtree
     public List<Particle> retrieve(List<Particle> returnObjects, Particle p) 
     {
         int index = getIndex(p);
-        if (index != -1 && nodes[0] != null) 
+        if (index != -1 && nodes[0] != null)
             nodes[index].retrieve(returnObjects, p);
 
         returnObjects.addAll(objects);
