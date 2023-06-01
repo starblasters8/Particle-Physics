@@ -13,7 +13,7 @@ public class Particle
     protected float boundW, boundH; // Width and height of the screen/max bounding box
     protected float boundX, boundY; // X and Y coordinates of top left corner of bounding box
     protected float damping = 0.01f; // Damping factor to simulate air resistance
-    protected float minVelocity = 0.01f; // Minimum velocity threshold
+    protected static final float MIN_VELOCITY = 0.01f; // Minimum velocity threshold
 
     public Particle(float x, float y, float radius, float mass, float elasticity, Color c, float boundX, float boundY, float boundW, float boundH) 
     {
@@ -41,8 +41,8 @@ public class Particle
         vy *= (1 - damping);
 
         // Stop moving if velocity is below the threshold
-        if (Math.abs(vx) < minVelocity) vx = 0;
-        if (Math.abs(vy) < minVelocity) vy = 0;
+        if (Math.abs(vx) < MIN_VELOCITY) vx = 0;
+        if (Math.abs(vy) < MIN_VELOCITY) vy = 0;
 
         // Update position based on velocity
         x += vx;
