@@ -6,16 +6,16 @@ import java.util.List;
 
 public class ParticleGroup 
 {
-    protected float x, y; // X and Y coordinates of top left corner
-    protected float w, h; // Width and height
-    protected Particle[] particles; // Particles in the group
-    protected Color c; // Color
-    protected float radius, mass; // Radius and mass
-    protected float diameter; // Diameter
+    private float x, y; // X and Y coordinates of top left corner
+    private float w, h; // Width and height
+    private Particle[] particles; // Particles in the group
+    private Color c; // Color
+    private float radius, mass; // Radius and mass
+    private float diameter; // Diameter
 
-    protected float elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
-    protected float boundW, boundH; // Width and height of the screen/max bounding box
-    protected float boundX, boundY; // X and Y coordinates of top left corner of bounding box
+    private float elasticity; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
+    private float boundW, boundH; // Width and height of the screen/max bounding box
+    private float boundX, boundY; // X and Y coordinates of top left corner of bounding box
 
     public ParticleGroup(float x, float y, float w, float h, float radius, float mass, float elasticity, Color c, float boundX, float boundY, float boundW, float boundH)
     {

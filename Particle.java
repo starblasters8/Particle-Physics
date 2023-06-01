@@ -3,17 +3,16 @@ import java.awt.Graphics2D;
 
 public class Particle 
 {
-    protected float x, y; // X and Y coordinates of top left corner
-    protected float vx = 0, vy = 0; // X and Y velocities
-    protected float ax = 0, ay = 0; // X and Y accelerations
-    protected float radius, mass; // Radius and mass
-    protected float diameter; // Diameter
-    protected Color c; // Color
-    protected float elasticity = 1; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
-    protected float boundW, boundH; // Width and height of the screen/max bounding box
-    protected float boundX, boundY; // X and Y coordinates of top left corner of bounding box
-    protected float damping = 0.01f; // Damping factor to simulate air resistance
-    protected static final float MIN_VELOCITY = 0.01f; // Minimum velocity threshold
+    private float x, y; // X and Y coordinates of top left corner
+    private float vx = 0, vy = 0; // X and Y velocities
+    private float radius, mass; // Radius and mass
+    private float diameter; // Diameter
+    private Color c; // Color
+    private float elasticity = 1; // Elasticity (1 = perfectly elastic, 0 = perfectly inelastic)
+    private float boundW, boundH; // Width and height of the screen/max bounding box
+    private float boundX, boundY; // X and Y coordinates of top left corner of bounding box
+    private float damping = 0.01f; // Damping factor to simulate air resistance
+    private static final float MIN_VELOCITY = 0.01f; // Minimum velocity threshold
 
     public Particle(float x, float y, float radius, float mass, float elasticity, Color c, float boundX, float boundY, float boundW, float boundH) 
     {
